@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "Tester\Tester.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "Library\Library.csproj", "{5E7BAAC5-C412-48B0-9CFC-61BFFB99D5F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Language", "Language\Language.csproj", "{6F73D2BC-C258-431E-BD2F-3BCC7C3A8CFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Language", "Language\Language.csproj", "{6F73D2BC-C258-431E-BD2F-3BCC7C3A8CFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{B1C37377-0D89-4CDB-9204-3F124FCFA17E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6F73D2BC-C258-431E-BD2F-3BCC7C3A8CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F73D2BC-C258-431E-BD2F-3BCC7C3A8CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F73D2BC-C258-431E-BD2F-3BCC7C3A8CFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1C37377-0D89-4CDB-9204-3F124FCFA17E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1C37377-0D89-4CDB-9204-3F124FCFA17E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1C37377-0D89-4CDB-9204-3F124FCFA17E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1C37377-0D89-4CDB-9204-3F124FCFA17E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

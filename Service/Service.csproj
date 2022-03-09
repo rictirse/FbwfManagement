@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<RootNamespace>Fbwf.Service</RootNamespace>
+		<Product>FbwfManagement</Product>
+		<Company>Dang</Company>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UserSecretsId>dotnet-Service-4E0D546C-DE0E-49E6-8C92-2806C22F3373</UserSecretsId>
+		<Copyright>Copyright © DangWang $([System.DateTime]::Now.ToString(yyyy))</Copyright>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Library\Library.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<Major>1</Major>
+		<Minor>0</Minor>
+		<ProjectStartedDate>$([System.DateTime]::op_Subtraction($([System.DateTime]::get_Now().get_Date()),$([System.DateTime]::new(2017,9,17))).get_TotalDays())</ProjectStartedDate>
+		<DaysSinceProjectStarted>$([System.DateTime]::Now.ToString(Hmm))</DaysSinceProjectStarted>
+		<DateTimeSuffix>$([System.DateTime]::Now.ToString(yyyyMMdd))</DateTimeSuffix>
+		<VersionSuffix>$(Major).$(Minor).$(ProjectStartedDate).$(DaysSinceProjectStarted)</VersionSuffix>
+		<AssemblyVersion Condition=" '$(DateTimeSuffix)' == '' ">0.0.0.1</AssemblyVersion>
+		<AssemblyVersion Condition=" '$(DateTimeSuffix)' != '' ">$(VersionSuffix)</AssemblyVersion>
+		<Version Condition=" '$(DateTimeSuffix)' == '' ">0.0.0.1</Version>
+		<Version Condition=" '$(DateTimeSuffix)' != '' ">$(DateTimeSuffix)</Version>
+	</PropertyGroup>
+</Project>

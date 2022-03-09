@@ -1,7 +1,8 @@
-﻿using System.IO;
+﻿using Fbwf.Library.Helpers;
+using System.IO;
 using System.Threading.Tasks;
 
-namespace Fbwf.Library.Helpers
+namespace Fbwf.Library.Method
 {
     public static class VHDMounter
     {
@@ -24,55 +25,47 @@ namespace Fbwf.Library.Helpers
         static string CreatVHDCmd(string fullName, int size) =>
             $"CREATE VDISK FILE=\"{fullName}\" MAXIMUM={size} TYPE=EXPANDABLE";
 
-        /// <summary>
-        /// 建立排程自動掛載VHD腳本
-        /// </summary>
-        /// <param name="mountScriptPath">腳本路徑</param>
-        /// <param name="vDiskPath">VHD路徑</param>
-        public static void CreatMountScript(FileInfo mountScriptPath, FileInfo vDiskPath)
-        {
-            if (mountScriptPath.Exists) return;
-            File.WriteAllText(mountScriptPath.FullName, CreatMountScriptCmd(vDiskPath.FullName));
-        }
 
-        /// <summary>
-        /// 建立排程自動掛載VHD腳本
-        /// </summary>
-        /// <param name="mountScriptPath">腳本路徑</param>
-        /// <param name="vDiskPath">VHD路徑</param>
-        public static async Task CreatMountScriptAsync(FileInfo mountScriptPath, FileInfo vDiskPath)
-        {
-            if (mountScriptPath.Exists) return;
-            await File.WriteAllTextAsync(mountScriptPath.FullName, CreatMountScriptCmd(vDiskPath.FullName));
-        }
-
-        private static string CreatMountScriptCmd(string fullName) =>
-            $"select vdisk file=\"{fullName}\"\r\n" +
-            $"attach vdisk";
+        private static string[] AttachtCmd(string fullName) =>
+            new[] { $"select vdisk file =\"{fullName}\"", "attach vdisk" };
 
         /// <summary>
         /// 掛載VHD
+        /// </summary>
+        /// <param name="vDiskPath">VHD路徑</param>
+        public static void Attach(FileInfo vDiskPath) =>
+            Command(AttachtCmd(vDiskPath.FullName));
+        
+        /// <summary>
+        /// 掛載VHD
+        /// </summary>
+        /// <param name="vDiskPath">VHD路徑</param>
+        public static async Task AttachAsync(FileInfo vDiskPath) =>
+            await CommandAsync(AttachtCmd(vDiskPath.FullName));
+        
+        /// <summary>
+        /// 初始化 + 掛載VHD
         /// </summary>
         /// <param name="vDiskPath">VHD路徑</param>
         /// <param name="diksLetter">指定掛載的磁碟代號</param>
         public static void Attach(FileInfo vDiskPath, char diksLetter)
         {
             if (char.IsWhiteSpace(diksLetter)) return;
-            Command(AttachCmd(vDiskPath.FullName, diksLetter));
+            Command(FirstAttachCmd(vDiskPath.FullName, diksLetter));
         }
 
         /// <summary>
-        /// 掛載VHD
+        /// 初始化 + 掛載VHD
         /// </summary>
         /// <param name="vDiskPath">VHD路徑</param>
         /// <param name="diksLetter">指定掛載的磁碟代號</param>
         public static async Task AttachAsync(FileInfo vDiskPath, char diksLetter)
         {
             if (char.IsWhiteSpace(diksLetter)) return;
-            await CommandAsync(AttachCmd(vDiskPath.FullName, diksLetter));
+            await CommandAsync(FirstAttachCmd(vDiskPath.FullName, diksLetter));
         }
 
-        private static string[] AttachCmd(string fullName, char diksLetter) =>
+        private static string[] FirstAttachCmd(string fullName, char diksLetter) =>
             new [] 
             {
                 $"select vdisk file =\"{fullName}\"",
@@ -96,8 +89,8 @@ namespace Fbwf.Library.Helpers
         public static async Task DetachAsync(FileInfo vDiskPath) =>
             await CommandAsync(DetachCmd(vDiskPath.FullName));
 
-        private static string DetachCmd(string fullName) =>
-            $"select vdisk file =\"{fullName}\"\r\ndetach vdisk";
+        private static string[] DetachCmd(string fullName) =>
+            new[] { $"select vdisk file =\"{fullName}\"", "detach vdisk" };
 
         private static string Command(params string[] cmds) =>
             ConsoleHelper.Command("diskpart.exe", cmds);

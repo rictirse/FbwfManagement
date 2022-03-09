@@ -1,8 +1,7 @@
-﻿using Fbwf.Library.Helpers;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 
-namespace Fbwf.Libaray.Method
+namespace Fbwf.Library.Method
 {
     public class FbwfRegistry
     {

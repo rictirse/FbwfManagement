@@ -38,6 +38,7 @@ namespace Fbwf.Library.Helpers
             {
                 p.StandardInput.WriteLine(cmd);
             }
+            p.StandardInput.WriteLine("exit");
             var result = await p.StandardOutput.ReadToEndAsync();
             var error  = await p.StandardError.ReadToEndAsync();
             if (!string.IsNullOrWhiteSpace(error))

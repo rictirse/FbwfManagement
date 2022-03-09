@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Fbwf.Libaray.Method
+namespace Fbwf.Library.Method
 {
     public static class FbwfInstall
     {

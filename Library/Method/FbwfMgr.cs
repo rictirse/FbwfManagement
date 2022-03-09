@@ -1,5 +1,6 @@
 ﻿using Fbwf.Base;
 using Fbwf.Library.Enums;
+using Fbwf.Library.Helpers;
 using Fbwf.Library.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fbwf.Library.Helpers
+namespace Fbwf.Library.Method
 {
     public class FbwfMgr : PropertyBase
     {

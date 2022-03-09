@@ -1,4 +1,4 @@
-using Fbwf.Library.Helpers;
+using Fbwf.Library.Method;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -9,13 +9,13 @@ namespace Fbwf.Tester
 {
     public class VhdTester
     {
-        const string vhdPath = "R:\\fbwfVisualDisk.vhd";
+        string vhdPath;
         FileInfo fiVhdPath;
 
         [SetUp]
         public void Setup()
         {
-            fiVhdPath = new FileInfo(vhdPath);
+            fiVhdPath = new FileInfo(AssemblyData.VhdPath);
         }
 
         [Test]
@@ -38,7 +38,8 @@ namespace Fbwf.Tester
             try
             {
                 await VHDMounter.CreatVHDAsync(fiVhdPath);
-                Assert.IsTrue(File.Exists(vhdPath));
+                fiVhdPath.Refresh();
+                Assert.IsTrue(fiVhdPath.Exists);
             }
             catch (Exception ex)
             {
@@ -48,6 +49,19 @@ namespace Fbwf.Tester
 
         [Test]
         public async Task AttachAsync()
+        {
+            try
+            {
+                await VHDMounter.AttachAsync(fiVhdPath);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public async Task FirstAttachAsync()
         {
             try
             {

@@ -1,7 +1,6 @@
 ﻿using Fbwf.Base;
 using Fbwf.Language;
-using Fbwf.Libaray;
-using Fbwf.Libaray.Method;
+using Fbwf.Library.Method;
 using Fbwf.Library.Helpers;
 using System;
 using System.Globalization;

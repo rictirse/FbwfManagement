@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Fbwf.Libaray.Method
+namespace Fbwf.Library.Method
 {
     public static class AssemblyData
     {
@@ -11,6 +11,7 @@ namespace Fbwf.Libaray.Method
         public static string AssemblyName => System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
         public static string AppName => AppDomain.CurrentDomain.FriendlyName;
+
         /// <summary>
         /// 程式根目錄，無視工作目錄
         /// </summary>
@@ -20,6 +21,10 @@ namespace Fbwf.Libaray.Method
         /// </summary>
         public static string AssemblyVersion => GetAssemblyVersion();
         public static string AppVersion => GetFileVersion(Process.GetCurrentProcess().MainModule.FileName);
+        /// <summary>
+        /// 虛擬磁碟位置
+        /// </summary>
+        public static string VhdPath => System.IO.Path.Combine(Path, "fbwfVisualDisk.vhd");
 
         static string GetAssemblyVersion()
         {
