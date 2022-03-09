@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<RootNamespace>Fbwf.Library</RootNamespace>
+		<Product>FbwfManagement</Product>
+		<UseWPF>true</UseWPF>
+		<Company>Dang</Company>
+		<Copyright>Copyright © DangWang $([System.DateTime]::Now.ToString(yyyy))</Copyright>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<Major>1</Major>
+		<Minor>0</Minor>
+		<ProjectStartedDate>$([System.DateTime]::op_Subtraction($([System.DateTime]::get_Now().get_Date()),$([System.DateTime]::new(2017,9,17))).get_TotalDays())</ProjectStartedDate>
+		<DaysSinceProjectStarted>$([System.DateTime]::Now.ToString(Hmm))</DaysSinceProjectStarted>
+		<DateTimeSuffix>$([System.DateTime]::Now.ToString(yyyyMMdd))</DateTimeSuffix>
+		<VersionSuffix>$(Major).$(Minor).$(ProjectStartedDate).$(DaysSinceProjectStarted)</VersionSuffix>
+		<AssemblyVersion Condition=" '$(DateTimeSuffix)' == '' ">0.0.0.1</AssemblyVersion>
+		<AssemblyVersion Condition=" '$(DateTimeSuffix)' != '' ">$(VersionSuffix)</AssemblyVersion>
+		<Version Condition=" '$(DateTimeSuffix)' == '' ">0.0.0.1</Version>
+		<Version Condition=" '$(DateTimeSuffix)' != '' ">$(DateTimeSuffix)</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Resource\fbwf.sys" />
+	  <None Remove="Resource\fbwfcfg.dll" />
+	  <None Remove="Resource\fbwfcfg.exe" />
+	  <None Remove="Resource\fbwflib.dll" />
+	  <None Remove="Resource\fbwfMgr.exe" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Resource\fbwf.sys" />
+	  <EmbeddedResource Include="Resource\fbwfcfg.dll" />
+	  <EmbeddedResource Include="Resource\fbwfcfg.exe" />
+	  <EmbeddedResource Include="Resource\fbwflib.dll" />
+	  <EmbeddedResource Include="Resource\fbwfMgr.exe" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+	  <PackageReference Include="TaskScheduler" Version="2.10.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Language\Language.csproj" />
+	</ItemGroup>
+
+</Project>

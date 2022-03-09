@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+
+    <sys:String x:Key="DriverLetter">Driver letter</sys:String>
+    <sys:String x:Key="CacheSize">Cache size</sys:String>
+    
+    <!--MessageBox-->
+    <sys:String x:Key="LoadConfigErr" xml:space="preserve">Load config failed&#x0a;Error message : &#x0a;</sys:String>
+    <sys:String x:Key="SaveConfigErr" xml:space="preserve">Save config failed&#x0a;Error message : &#x0a;</sys:String>
+</ResourceDictionary>
