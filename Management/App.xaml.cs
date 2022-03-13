@@ -1,4 +1,5 @@
 ﻿using Fbwf.Library.Config;
+using Fbwf.Library.Method;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,13 +16,13 @@ namespace Fbwf.Management
     public partial class App : Application
     {
         internal static XConfig cfg { get; private set; }
+        internal static FbwfMgr fbwfMgr { get; private set; }
 
         public App()
         {
-            //FbwfInstall.Install();
-            //var result = FbwfMgrHelper.Command("DisplayConfig");
             cfg = new();
             cfg.Load();
+            fbwfMgr = new ();
         }
     }
 }

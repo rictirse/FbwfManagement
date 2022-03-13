@@ -4,6 +4,15 @@
 
     <sys:String x:Key="DriverLetter">Driver letter</sys:String>
     <sys:String x:Key="CacheSize">Cache size</sys:String>
+    <sys:String x:Key="FbwfInstall">Fbwf installed</sys:String>
+    <sys:String x:Key="FbwfEnable">Fbwf enable</sys:String>
+    <sys:String x:Key="OverlayCacheDataCompression">Overlay cache data compression</sys:String>
+    <sys:String x:Key="OverlayCachePreAllocation">Overlay cache pre-allocation</sys:String>
+    <sys:String x:Key="SizeDisplay">Virtual display mode</sys:String>
+    <sys:String x:Key="AutoMountAtBoot">Auto mount at boot</sys:String>
+    <sys:String x:Key="FbwfRamDisk">Fbwf dynamic ramdisk</sys:String>
+    <sys:String x:Key="NeedReboot">*Need reboot</sys:String>
+    <sys:String x:Key="Apply">Apply</sys:String>
 
     <!--MessageBox-->
     <sys:String x:Key="LoadConfigErr" xml:space="preserve">Load config failed&#x0a;Error message : &#x0a;</sys:String>

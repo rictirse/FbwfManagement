@@ -1,25 +1,56 @@
 ﻿using Fbwf.Base;
+using Fbwf.Library.Base;
 using Fbwf.Library.Enums;
 using Fbwf.Library.Helpers;
 using Fbwf.Library.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Fbwf.Library.Method
 {
-    public class FbwfMgr : PropertyBase
+    public partial class FbwfMgr : PropertyBase
     {
+        #region display
         /// <summary>
-        /// 是否已安裝
+        /// 快取大小
+        /// </summary>
+        public float? CacheSize
+        {
+            get => _CacheSize;
+            set { SetProperty(ref _CacheSize, value); }
+        }
+        float? _CacheSize = null;
+        /// <summary>
+        /// 已選擇的Ramdisk磁碟代號
+        /// </summary>
+        public string SelectedDriverLetter
+        {
+            get => _SelectedDriverLetter;
+            set { SetProperty(ref _SelectedDriverLetter, value); }
+        }
+        string _SelectedDriverLetter = null;
+        /// <summary>
+        /// 能使用的磁碟代號
+        /// </summary>
+        public ObservableRangeCollection<string> CanUseDriverLetter
+        {
+            get => _CanUseDriverLetter;
+            set { SetProperty(ref _CanUseDriverLetter, value); }
+        }
+        ObservableRangeCollection<string> _CanUseDriverLetter;
+        #endregion
+        /// <summary>
+        /// Fbwf是否已安裝
         /// </summary>
         public bool IsInstall
         {
             get => _IsInstall;
-            private set { SetProperty(ref _IsInstall, value); }
+            set { SetProperty(ref _IsInstall, value); }
         }
         bool _IsInstall = false;
         /// <summary>
@@ -28,17 +59,46 @@ namespace Fbwf.Library.Method
         public bool NeedReboot
         {
             get => _NeedReboot;
-            private set { SetProperty(ref _NeedReboot, value); }
+            set { SetProperty(ref _NeedReboot, value); }
         }
         bool _NeedReboot = false;
         /// <summary>
-        /// 目前Fbwf狀態
+        /// 是否需要重開機
+        /// </summary>
+        public bool AutoMountAtBoot
+        {
+            get => _AutoMountAtBoot;
+            set { SetProperty(ref _AutoMountAtBoot, value); }
+        }
+        bool _AutoMountAtBoot = false;
+        /// <summary>
+        /// 程式標題
+        /// </summary>
+        public string Title
+        {
+            get => _Title;
+            private set { SetProperty(ref _Title, value); }
+        }
+        string _Title = Language.Lang.Find("FbwfRamDisk");
+        /// <summary>
+        /// 目前Fbwf狀態(已生效狀態)
         /// </summary>
         public FbwfStatusVM CurrentSession { get; init; }
         /// <summary>
-        /// 重開機後的Fbwf狀態
+        /// 修改後的Fbwf狀態
         /// </summary>
         public FbwfStatusVM NextSession { get; init; }
+        /// <summary>
+        /// 顯示用的VM
+        /// init先用 CurrentSession
+        /// 有任何修改後改為 NextSession
+        /// </summary>
+        public FbwfStatusVM DisplayVM
+        {
+            get => _DisplayVM;
+            set => SetProperty(ref _DisplayVM, value);
+        }
+        FbwfStatusVM _DisplayVM = null;
 
         private Dictionary<FbwfStatusSession, FbwfStatusVM> FbwfStatus { get; init; }
 
@@ -49,27 +109,12 @@ namespace Fbwf.Library.Method
             FbwfStatus     = new ();
             FbwfStatus.Add(FbwfStatusSession.Current, CurrentSession);
             FbwfStatus.Add(FbwfStatusSession.Next, NextSession);
+            Refresh();
+            DisplayVM = CurrentSession;
+            this.CanUseDriverLetter = new();
+            CanUseDriverLetter.AddRange(VolumeHelper.CanUseDeviceName());
+            SelectedDriverLetter = $"{CurrentSession.ProtectedVolume.FirstOrDefault()}\\";
         }
-
-        public static void Disable()
-        {
-            var result = Command("Disable");
-        }
-
-        public static void Enable() =>
-            Command("Enable");
-
-        public static string DisplayConfig() =>
-            Command("DisplayConfig");
-
-        public static async Task<string> DisplayConfigAsync() =>
-            await CommandAsync("DisplayConfig");
-
-        public async Task RefreshAsync() =>
-            ParseStatus(await DisplayConfigAsync());
-        
-        public void Refresh() =>
-            ParseStatus(DisplayConfig());
 
         private void ParseStatus(string status)
         {
@@ -141,27 +186,7 @@ namespace Fbwf.Library.Method
                 }
             }
             NeedReboot = CurrentSession.CheckNeedReboot(NextSession);
+            AutoMountAtBoot = FbwfTaskScheduler.Exists();
         }
-
-        /// <summary>
-        /// 設定快取大小
-        /// </summary>
-        /// <param name="memSize">記憶體大小(MB)</param>
-        public static void SetCacheSize(int memSize)
-        {
-            var result = Command($"Setthreshold {memSize}");
-        }
-
-        public static void SetSizeDisplay(int mode)
-        {
-            var result = Command($"Setsizedisplay {mode}");
-        }
-
-        private static string Command(string cmd) =>
-            ConsoleHelper.CmdCommand("fbwfmgr.exe", cmd);
-
-        private static async Task<string> CommandAsync(string cmd) =>
-            await ConsoleHelper.CommandAsync("fbwfmgr.exe", cmd);
-
     }
 }

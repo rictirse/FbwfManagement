@@ -8,7 +8,13 @@ namespace Fbwf.Library.Enums
 {
     public enum FbwfStatusSession
     {
+        /// <summary>
+        /// 已生效的Fbwf狀態
+        /// </summary>
         Current,
+        /// <summary>
+        /// 未生效的Fbwf狀態
+        /// </summary>
         Next,
     }
 }

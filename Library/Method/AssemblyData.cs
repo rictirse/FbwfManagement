@@ -24,7 +24,11 @@ namespace Fbwf.Library.Method
         /// <summary>
         /// 虛擬磁碟位置
         /// </summary>
-        public static string VhdPath => System.IO.Path.Combine(Path, "fbwfVisualDisk.vhd");
+        public static string VhdPath => System.IO.Path.Combine(Path, "FbwfVhd.vhd");
+        /// <summary>
+        /// TaskScheduler呼叫的Mount script 
+        /// </summary>
+        public static string MountScript=> System.IO.Path.Combine(Path, "FbwfVhdMountScript.txt");
 
         static string GetAssemblyVersion()
         {

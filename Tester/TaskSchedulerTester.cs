@@ -1,4 +1,4 @@
-using Fbwf.Library.Method;
+﻿using Fbwf.Library.Method;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -7,24 +7,22 @@ using System.Threading.Tasks;
 
 namespace Fbwf.Tester
 {
-    internal class VhdTester
+    internal class TaskSchedulerTester
     {
-        string vhdPath = string.Empty;
-        FileInfo fiVhdPath;
-
         [SetUp]
         public void Setup()
         {
-            fiVhdPath = new FileInfo(AssemblyData.VhdPath);
+
         }
 
         [Test]
-        public void CreatVHD()
+        public void MountScriptWriteToFile()
         {
             try
             {
-                VHDMounter.CreatVHD(fiVhdPath);
-                Assert.IsTrue(File.Exists(vhdPath));
+                FbwfTaskScheduler.MountScriptWriteToFile();
+                Assert.True(File.Exists(AssemblyData.MountScript));
+                //File.Delete(AssemblyData.MountScript);
             }
             catch (Exception ex)
             {
@@ -33,13 +31,13 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public async Task CreatVHDAsync()
+        public async Task MountScriptWriteToFileAsync()
         {
             try
             {
-                await VHDMounter.CreatVHDAsync(fiVhdPath);
-                fiVhdPath.Refresh();
-                Assert.IsTrue(fiVhdPath.Exists);
+                await FbwfTaskScheduler.MountScriptWriteToFileAsync();
+                Assert.True(File.Exists(AssemblyData.MountScript));
+                //File.Delete(AssemblyData.MountScript);
             }
             catch (Exception ex)
             {
@@ -48,11 +46,11 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public async Task AttachAsync()
+        public void Exists()
         {
             try
             {
-                await VHDMounter.AttachAsync(fiVhdPath);
+                Assert.IsFalse(FbwfTaskScheduler.Exists());
             }
             catch (Exception ex)
             {
@@ -61,11 +59,12 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public async Task FirstAttachAsync()
+        public void WriteScheduler()
         {
             try
             {
-                await VHDMounter.AttachAsync(fiVhdPath, 'F');
+                FbwfTaskScheduler.Write();
+                Assert.IsTrue(FbwfTaskScheduler.Exists());
             }
             catch (Exception ex)
             {
@@ -74,11 +73,12 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public async Task DetachAsync()
+        public void DeleteTask()
         {
             try
             {
-                await VHDMounter.DetachAsync(fiVhdPath);
+                FbwfTaskScheduler.Delete();
+                Assert.False(FbwfTaskScheduler.Exists());
             }
             catch (Exception ex)
             {

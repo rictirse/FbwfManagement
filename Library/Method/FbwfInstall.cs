@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Fbwf.Library.Method
 {
@@ -26,6 +27,16 @@ namespace Fbwf.Library.Method
             File.WriteAllBytes(fi.FullName, fi.Name.ResourceToByteArray());
         }
 
+        static async Task BytesToFileAsync(FileInfo fi)
+        {
+            fi.Refresh();
+            if (fi.Exists) return;
+            if (!fi.Directory.Exists) fi.Directory.Create();
+
+            await File.WriteAllBytesAsync(fi.FullName, fi.Name.ResourceToByteArray());
+        }
+
+        #region Install
         /// <summary>
         /// 安裝Fbwf驅動
         /// </summary>
@@ -36,6 +47,7 @@ namespace Fbwf.Library.Method
                 FbwfRegistry.InstallFbwfReg();
                 return true;
             }
+            UAC.Check();
                 
             bool status = true;
 
@@ -52,29 +64,78 @@ namespace Fbwf.Library.Method
             {
                 return false;
             }
-            return FbwfRegistry.InstallFbwfReg();
+            status &= FbwfRegistry.InstallFbwfReg();
+            return status;
         }
 
         /// <summary>
-        /// Fbwf檔案是否存在
+        /// 安裝Fbwf驅動
         /// </summary>
-        public static bool Exists()
+        public static async Task<bool> InstallAsync()
         {
-            var status = true;
-            FbwfFiles.ForEach(x =>
+            if (Exists())
             {
-                x.Refresh();
-                status &= x.Exists;
-            });
+                FbwfRegistry.InstallFbwfReg();
+                return true;
+            }
+            UAC.Check();
+
+            bool status = true;
+
+            try
+            {
+                foreach (var fi in FbwfFiles)
+                {
+                    await BytesToFileAsync(fi);
+                    fi.Refresh();
+                    status &= fi.Exists;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            status &= FbwfRegistry.InstallFbwfReg();
             return status;
         }
+        #endregion
 
         /// <summary>
         /// 移除Fbwf
         /// </summary>
         public static bool Uninstall()
         {
+            UAC.Check();
             FbwfMgr.Disable();
+            FbwfTaskScheduler.Delete();
+            bool status = true;
+            try
+            {
+                FbwfFiles.ForEach(x =>
+                {
+                    File.Delete(x.FullName);
+                    x.Refresh();
+                    status &= !x.Exists;
+                });
+            }
+            catch
+            {
+                return false;
+            }
+
+            FbwfRegistry.UninstallFbwfReg();
+            return status;
+        }
+
+        /// <summary>
+        /// 移除Fbwf
+        /// </summary>
+        public static async Task<bool> UninstallAsync()
+        {
+            UAC.Check();
+            await FbwfMgr.DisableAsync();
+            FbwfTaskScheduler.Delete();
             bool status = true;
             try
             {
@@ -90,6 +151,20 @@ namespace Fbwf.Library.Method
                 return false;
             }
             FbwfRegistry.UninstallFbwfReg();
+            return status;
+        }
+
+        /// <summary>
+        /// Fbwf檔案是否存在
+        /// </summary>
+        public static bool Exists()
+        {
+            var status = true;
+            FbwfFiles.ForEach(x =>
+            {
+                x.Refresh();
+                status &= x.Exists;
+            });
             return status;
         }
     }

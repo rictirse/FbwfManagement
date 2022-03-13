@@ -3,21 +3,77 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fbwf"
+        xmlns:local="clr-namespace:Fbwf.Management"
+        xmlns:CVT="clr-namespace:Fbwf.Management.Converter"
         mc:Ignorable="d"
-        Title="FbwfControlPanel" Height="200" Width="400">
-    <Grid>
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
+        Closing="Window_Closing"
+        WindowStartupLocation="CenterScreen"
+        Title="FbwfControlPanel" Height="360" Width="400">
+    <Window.Resources>
+        <ResourceDictionary>
+            <CVT:IsFalseToVisibility x:Key="IsFalseToVisibility"/>
+            <CVT:FbwfStatusToBool x:Key="FbwfStatusToBool"/>
+            <CVT:FbwfSizeDisplayToBool x:Key="FbwfSizeDisplayToBool"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+
+    <StackPanel Orientation="Vertical" Margin="15">
+        <CheckBox Style="{DynamicResource SliderCheckBox}"
+                  Content="{DynamicResource FbwfInstall}" 
+                  Tag="FbwfInstall"
+                  Click="OnCbClick"
+                  IsChecked="{Binding IsInstall, Mode=TwoWay}"
+                  Margin="0,0,0,15"/>
+        <StackPanel IsEnabled="{Binding IsInstall}">
+            <CheckBox Style="{DynamicResource SliderCheckBox}"
+                      Content="{DynamicResource FbwfEnable}" 
+                      Tag="FbwfEnable"
+                      Click="OnCbClick"
+                      IsChecked="{Binding Path=DisplayVM.Status, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                      Margin="0,0,0,15"/>
+            <CheckBox Style="{DynamicResource SliderCheckBox}"
+                      Content="{DynamicResource OverlayCacheDataCompression}" 
+                      Tag="OverlayCacheDataCompression"
+                      Click="OnCbClick"
+                      IsChecked="{Binding Path=DisplayVM.OverlayCacheDataCompression, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                      Margin="0,0,0,15"/>
+            <CheckBox Style="{DynamicResource SliderCheckBox}" 
+                      Content="{DynamicResource OverlayCachePreAllocation}" 
+                      Tag="OverlayCachePreAllocation"
+                      Click="OnCbClick"
+                      IsChecked="{Binding Path=DisplayVM.OverlayCachePreAllocation, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                      Margin="0,0,0,15"/>
+            <CheckBox Style="{DynamicResource SliderCheckBox}" 
+                      Content="{DynamicResource SizeDisplay}" 
+                      Tag="SizeDisplay"
+                      Click="OnCbClick"
+                      IsChecked="{Binding Path=DisplayVM.SizeDisplay, Converter={StaticResource FbwfSizeDisplayToBool}, Mode=TwoWay}"
+                      Margin="0,0,0,15"/>
+            <CheckBox Style="{DynamicResource SliderCheckBox}" 
+                      Content="{DynamicResource AutoMountAtBoot}"
+                      Tag="AutoMountAtBoot"
+                      Click="OnCbClick"
+                      IsChecked="{Binding Path=AutoMountAtBoot, Mode=TwoWay}"
+                      Margin="0,0,0,15"/>
+            <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
                 <TextBlock Text="{DynamicResource DriverLetter}"/>
-                <ComboBox />
+                <ComboBox ItemsSource="{Binding Path=CanUseDriverLetter}" 
+                          SelectedValue="{Binding Path=SelectedDriverLetter}" 
+                          IsReadOnly="True" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+
+            <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
                 <TextBlock Text="{DynamicResource CacheSize}"/>
-                <TextBox Text="100"/>
+                <TextBox Text="{Binding Path=DisplayVM.OverlayCacheThreshold, UpdateSourceTrigger=PropertyChanged}"/>
                 <TextBlock Text="GB"/>
             </StackPanel>
+            <Button Content="{DynamicResource Apply}" 
+                    Click="OnBtnClick" 
+                    IsEnabled="{Binding InstallEnable}"
+                    Height="24" Width="100"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Right"/>
         </StackPanel>
-        <Button Content="Install" Height="24" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10"/>
-    </Grid>
+    </StackPanel>
 </Window>

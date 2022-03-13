@@ -22,10 +22,20 @@ namespace Fbwf.Library.Method
         public static async Task CreatVHDAsync(FileInfo vDiskPath, int size = 32) =>
              await CommandAsync(CreatVHDCmd(vDiskPath.FullName, size));
 
-        static string CreatVHDCmd(string fullName, int size) =>
+        /// <summary>
+        /// 建立VHD指令
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        private static string CreatVHDCmd(string fullName, int size) =>
             $"CREATE VDISK FILE=\"{fullName}\" MAXIMUM={size} TYPE=EXPANDABLE";
 
-
+        /// <summary>
+        /// 掛載VHD指令
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <returns></returns>
         private static string[] AttachtCmd(string fullName) =>
             new[] { $"select vdisk file =\"{fullName}\"", "attach vdisk" };
 
@@ -65,6 +75,9 @@ namespace Fbwf.Library.Method
             await CommandAsync(FirstAttachCmd(vDiskPath.FullName, diksLetter));
         }
 
+        /// <summary>
+        /// 初次掛載 + 格式化指令
+        /// </summary>
         private static string[] FirstAttachCmd(string fullName, char diksLetter) =>
             new [] 
             {
@@ -89,6 +102,11 @@ namespace Fbwf.Library.Method
         public static async Task DetachAsync(FileInfo vDiskPath) =>
             await CommandAsync(DetachCmd(vDiskPath.FullName));
 
+        /// <summary>
+        /// 卸載VHD指令
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <returns></returns>
         private static string[] DetachCmd(string fullName) =>
             new[] { $"select vdisk file =\"{fullName}\"", "detach vdisk" };
 

@@ -1,5 +1,6 @@
 ﻿using Fbwf.Base;
 using Fbwf.Language;
+using Fbwf.Library.Base;
 using Fbwf.Library.Method;
 using Fbwf.Library.Helpers;
 using System;
@@ -7,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Windows;
+using System.Linq;
 
 namespace Fbwf.Library.Config
 {
@@ -41,7 +43,6 @@ namespace Fbwf.Library.Config
 
         public virtual void Load()
         {
-
             XConfig _base = null;
             if (new FileInfo(ConfigFileName).Exists)
             {
@@ -54,7 +55,6 @@ namespace Fbwf.Library.Config
                     MessageBox.Show($"{Lang.Find("LoadConfigErr")}{ex.Message}", "failed", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
             this.Culture = _base?.Culture ?? new CultureInfo(_base?.Language ?? "en-US", false);
             this.Version = $"{AssemblyData.AppName} {AssemblyData.AppVersion}";
         }

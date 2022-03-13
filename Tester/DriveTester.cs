@@ -1,4 +1,5 @@
-﻿using Fbwf.Library.Method;
+﻿using Fbwf.Library.Helpers;
+using Fbwf.Library.Method;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Fbwf.Tester
 {
-    internal class FbwfMgrTester
+    internal class DriveTester
     {
         [SetUp]
         public void Setup()
@@ -16,11 +17,11 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public void DisplayConfig()
+        public void GetMemStatus()
         {
             try
             {
-
+                var status = MemoryHelper.MemStatus();
             }
             catch (Exception ex)
             {
@@ -29,11 +30,11 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public async Task DisplayConfigAsync()
+        public void GetAllVolume()
         {
             try
             {
-                await FbwfMgr.DisplayConfigAsync();
+                var status = VolumeHelper.AllDevice();
             }
             catch (Exception ex)
             {
@@ -42,12 +43,24 @@ namespace Fbwf.Tester
         }
 
         [Test]
-        public async Task RefreshAsync()
+        public void VolumeExists()
         {
             try
             {
-                var fbwf = new FbwfMgr();
-                await fbwf.RefreshAsync();
+                var status = VolumeHelper.Exists(null);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public void CanUseDeviceName()
+        {
+            try
+            {
+                var status = VolumeHelper.CanUseDeviceName();
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Fbwf.Library.Helpers;
+using Microsoft.Win32;
 using System;
 
 namespace Fbwf.Library.Method
@@ -13,6 +14,7 @@ namespace Fbwf.Library.Method
         /// </summary>
         public static bool InstallFbwfReg()
         {
+            UAC.Check();
             //確認是否註冊檔已登入
             if (IsFbwfExists("EnabledOnAllSkus"))
             {
@@ -65,6 +67,7 @@ namespace Fbwf.Library.Method
 
         public static void UninstallFbwfReg()
         {
+            UAC.Check();
             var hklm = Registry.LocalMachine;
             var subDir = hklm.OpenSubKey(FbwfRegPath, true);
             if (subDir == null) return;
