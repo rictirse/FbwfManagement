@@ -44,7 +44,7 @@ namespace Fbwf.Library.Method
         {
             if (Exists()) 
             {
-                FbwfRegistry.InstallFbwfReg();
+                FbwfRegistry.Write();
                 return true;
             }
             UAC.Check();
@@ -64,7 +64,7 @@ namespace Fbwf.Library.Method
             {
                 return false;
             }
-            status &= FbwfRegistry.InstallFbwfReg();
+            status &= FbwfRegistry.Write();
             return status;
         }
 
@@ -75,7 +75,7 @@ namespace Fbwf.Library.Method
         {
             if (Exists())
             {
-                FbwfRegistry.InstallFbwfReg();
+                FbwfRegistry.Write();
                 return true;
             }
             UAC.Check();
@@ -96,7 +96,7 @@ namespace Fbwf.Library.Method
                 return false;
             }
 
-            status &= FbwfRegistry.InstallFbwfReg();
+            status &= FbwfRegistry.Write();
             return status;
         }
         #endregion
@@ -124,7 +124,7 @@ namespace Fbwf.Library.Method
                 return false;
             }
 
-            FbwfRegistry.UninstallFbwfReg();
+            FbwfRegistry.Delete();
             return status;
         }
 
@@ -150,7 +150,7 @@ namespace Fbwf.Library.Method
             {
                 return false;
             }
-            FbwfRegistry.UninstallFbwfReg();
+            FbwfRegistry.Delete();
             return status;
         }
 

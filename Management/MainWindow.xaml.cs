@@ -62,21 +62,25 @@ namespace Fbwf.Management
                 default:
                     break;
             }
+            await App.fbwfMgr.RefreshAsync();
         }
 
         private async void OnBtnClick(object sender, RoutedEventArgs e)
         {
-            var cacheSize = App.fbwfMgr.DisplayVM.OverlayCacheThreshold;
-            var mount     = App.fbwfMgr.SelectedDriverLetter;
+            var cacheSize    = App.fbwfMgr.NextSession.OverlayCacheThreshold;
+            var selectedDisk = App.fbwfMgr.SelectedDriverLetter;
+            var diskLetter   = selectedDisk.Substring(0, 1);
 
             await App.fbwfMgr.RefreshAsync();
 
-            if (cacheSize != App.fbwfMgr.DisplayVM.OverlayCacheThreshold)
+            if (cacheSize != App.fbwfMgr.NextSession.OverlayCacheThreshold)
             {
+                App.fbwfMgr.NextSession.OverlayCacheThreshold = cacheSize;
                 await FbwfMgr.SetCacheSizeAsync((int)cacheSize);
             }
 
-            if (!VolumeHelper.Exists(mount))
+            if (!VolumeHelper.Exists(selectedDisk) && 
+                VolumeHelper.Conforms(selectedDisk))
             {
                 try
                 {
@@ -88,11 +92,23 @@ namespace Fbwf.Management
                     }
                         
                     await VHDMounter.CreatVHDAsync(fi);
-                    await VHDMounter.AttachAsync(fi, mount.FirstOrDefault());
+                    await VHDMounter.AttachAsync(fi, selectedDisk.FirstOrDefault());
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
+                }
+
+                ///新增選定的控制磁區
+                ///新增需要已存在的磁碟區，所以vhd要先mount
+                if (!App.fbwfMgr.NextSession.ProtectedVolume.Any(x => x == diskLetter))
+                {
+                    await FbwfMgr.AddVolumeAsync(diskLetter.FirstOrDefault());
+                }
+                ///移除非選定的控制磁區
+                foreach (var _diskLetter in App.fbwfMgr.NextSession.ProtectedVolume.Except(new[] { diskLetter }))
+                {
+                    await FbwfMgr.RemoveVolumeAsync(_diskLetter.FirstOrDefault());
                 }
             }
         }

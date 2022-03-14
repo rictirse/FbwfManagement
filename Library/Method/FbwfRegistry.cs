@@ -12,11 +12,11 @@ namespace Fbwf.Library.Method
         /// 註冊Fbwf Registry
         /// 成功安裝回覆true
         /// </summary>
-        public static bool InstallFbwfReg()
+        public static bool Write()
         {
             UAC.Check();
             //確認是否註冊檔已登入
-            if (IsFbwfExists("EnabledOnAllSkus"))
+            if (Exists("EnabledOnAllSkus"))
             {
                 var status = FbwfMgr.DisplayConfig();
                 //當下狀態為關閉
@@ -65,7 +65,7 @@ namespace Fbwf.Library.Method
         }
 
 
-        public static void UninstallFbwfReg()
+        public static void Delete()
         {
             UAC.Check();
             var hklm = Registry.LocalMachine;
@@ -84,7 +84,7 @@ namespace Fbwf.Library.Method
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static bool IsFbwfExists(string name)
+        private static bool Exists(string name)
         {
             var hkml     = Registry.LocalMachine;
             var software = hkml.OpenSubKey(FbwfRegPath, true);

@@ -15,7 +15,7 @@ namespace Fbwf.Library.Method
 {
     public partial class FbwfMgr : PropertyBase
     {
-        #region display
+        #region Property
         /// <summary>
         /// 快取大小
         /// </summary>
@@ -43,7 +43,51 @@ namespace Fbwf.Library.Method
             set { SetProperty(ref _CanUseDriverLetter, value); }
         }
         ObservableRangeCollection<string> _CanUseDriverLetter;
-        #endregion
+        /// <summary>
+        /// Visibility current Fbwf status textblock
+        /// </summary>
+        public bool FbwfStatusVisibility
+        {
+            get => _FbwfStatusVisibility;
+            set { SetProperty(ref _FbwfStatusVisibility, value); }
+        }
+        bool _FbwfStatusVisibility = false;
+        /// <summary>
+        /// Visibility current overlay cache data compression status textblock
+        /// </summary>
+        public bool OverlayCacheDataCompressionVisibility
+        {
+            get => _OverlayCacheDataCompressionVisibility;
+            set { SetProperty(ref _OverlayCacheDataCompressionVisibility, value); }
+        }
+        bool _OverlayCacheDataCompressionVisibility = false;
+        /// <summary>
+        /// Visibility current Overlay cache pre-allocation status textblock
+        /// </summary>
+        public bool OverlayCachePreAllocationVisibility
+        {
+            get => _OverlayCachePreAllocationVisibility;
+            set { SetProperty(ref _OverlayCachePreAllocationVisibility, value); }
+        }
+        bool _OverlayCachePreAllocationVisibility = false;
+        /// <summary>
+        /// Visibility Size display mode textblock
+        /// </summary>
+        public bool SizeDisplayVisibility
+        {
+            get => _SizeDisplayVisibility;
+            set { SetProperty(ref _SizeDisplayVisibility, value); }
+        }
+        bool _SizeDisplayVisibility = false;
+        /// <summary>
+        /// Visibility Overlay cache threshold size textblock
+        /// </summary>
+        public bool OverlayCacheThresholdVisibility
+        {
+            get => _OverlayCacheThresholdVisibility;
+            set { SetProperty(ref _OverlayCacheThresholdVisibility, value); }
+        }
+        bool _OverlayCacheThresholdVisibility = false;
         /// <summary>
         /// Fbwf是否已安裝
         /// </summary>
@@ -80,6 +124,7 @@ namespace Fbwf.Library.Method
             private set { SetProperty(ref _Title, value); }
         }
         string _Title = Language.Lang.Find("FbwfRamDisk");
+
         /// <summary>
         /// 目前Fbwf狀態(已生效狀態)
         /// </summary>
@@ -88,19 +133,9 @@ namespace Fbwf.Library.Method
         /// 修改後的Fbwf狀態
         /// </summary>
         public FbwfStatusVM NextSession { get; init; }
-        /// <summary>
-        /// 顯示用的VM
-        /// init先用 CurrentSession
-        /// 有任何修改後改為 NextSession
-        /// </summary>
-        public FbwfStatusVM DisplayVM
-        {
-            get => _DisplayVM;
-            set => SetProperty(ref _DisplayVM, value);
-        }
-        FbwfStatusVM _DisplayVM = null;
 
         private Dictionary<FbwfStatusSession, FbwfStatusVM> FbwfStatus { get; init; }
+        #endregion
 
         public FbwfMgr()
         {
@@ -110,7 +145,6 @@ namespace Fbwf.Library.Method
             FbwfStatus.Add(FbwfStatusSession.Current, CurrentSession);
             FbwfStatus.Add(FbwfStatusSession.Next, NextSession);
             Refresh();
-            DisplayVM = CurrentSession;
             this.CanUseDriverLetter = new();
             CanUseDriverLetter.AddRange(VolumeHelper.CanUseDeviceName());
             SelectedDriverLetter = $"{CurrentSession.ProtectedVolume.FirstOrDefault()}\\";
@@ -147,6 +181,10 @@ namespace Fbwf.Library.Method
                 {
                     var sp = line.Split(':');
                     float.TryParse(sp[1].Remove(sp[1].Length - 4, 4), out var value);
+                    if (sp[1].ToLower().Contains("gb"))
+                    {
+                        value *= 1000;
+                    }
                     currentStatus.OverlayCacheThreshold = value;
                 }
                 else if (line.Contains("overlay cache pre-allocation:"))
@@ -185,6 +223,12 @@ namespace Fbwf.Library.Method
                     }
                 }
             }
+            FbwfStatusVisibility = CurrentSession.Status != NextSession.Status;
+            OverlayCacheDataCompressionVisibility = CurrentSession.OverlayCacheDataCompression != NextSession.OverlayCacheDataCompression;
+            OverlayCachePreAllocationVisibility = CurrentSession.OverlayCachePreAllocation != NextSession.OverlayCachePreAllocation;
+            SizeDisplayVisibility = CurrentSession.SizeDisplay != NextSession.SizeDisplay;
+            OverlayCacheThresholdVisibility = CurrentSession.OverlayCacheThreshold != NextSession.OverlayCacheThreshold;
+
             NeedReboot = CurrentSession.CheckNeedReboot(NextSession);
             AutoMountAtBoot = FbwfTaskScheduler.Exists();
         }

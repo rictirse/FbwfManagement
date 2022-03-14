@@ -56,7 +56,7 @@ namespace Fbwf.Library.Method
                 td.Principal.UserId = "SYSTEM";
                 td.Principal.RunLevel = TaskRunLevel.Highest;
 
-                td.Actions.Add(new ExecAction("diskpart.exe", GetMountScript, null));
+                td.Actions.Add(new ExecAction("diskpart.exe", $"/s {AssemblyData.MountScript}", null));
 
                 ts.RootFolder.RegisterTaskDefinition(TaskSchedulerName, td);
             }

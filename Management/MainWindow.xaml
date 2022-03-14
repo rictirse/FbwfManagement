@@ -8,48 +8,70 @@
         mc:Ignorable="d"
         Closing="Window_Closing"
         WindowStartupLocation="CenterScreen"
-        Title="FbwfControlPanel" Height="360" Width="400">
+        Title="FbwfControlPanel" Height="350" Width="450">
     <Window.Resources>
         <ResourceDictionary>
             <CVT:IsFalseToVisibility x:Key="IsFalseToVisibility"/>
             <CVT:FbwfStatusToBool x:Key="FbwfStatusToBool"/>
             <CVT:FbwfSizeDisplayToBool x:Key="FbwfSizeDisplayToBool"/>
+            <CVT:IsTrueToVisibility x:Key="IsTrueToVisibility"/>
         </ResourceDictionary>
     </Window.Resources>
 
 
     <StackPanel Orientation="Vertical" Margin="15">
         <CheckBox Style="{DynamicResource SliderCheckBox}"
-                  Content="{DynamicResource FbwfInstall}" 
-                  Tag="FbwfInstall"
-                  Click="OnCbClick"
-                  IsChecked="{Binding IsInstall, Mode=TwoWay}"
-                  Margin="0,0,0,15"/>
-        <StackPanel IsEnabled="{Binding IsInstall}">
-            <CheckBox Style="{DynamicResource SliderCheckBox}"
-                      Content="{DynamicResource FbwfEnable}" 
-                      Tag="FbwfEnable"
+                      Content="{DynamicResource FbwfInstall}" 
+                      Tag="FbwfInstall"
                       Click="OnCbClick"
-                      IsChecked="{Binding Path=DisplayVM.Status, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                      IsChecked="{Binding IsInstall, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
-            <CheckBox Style="{DynamicResource SliderCheckBox}"
+        <StackPanel IsEnabled="{Binding IsInstall}">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Style="{DynamicResource SliderCheckBox}"
+                          Content="{DynamicResource FbwfEnable}" 
+                          Tag="FbwfEnable"
+                          Click="OnCbClick"
+                          IsChecked="{Binding Path=NextSession.Status, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                          Margin="0,0,0,15"/>
+                <TextBlock Text="{Binding Path=CurrentSession.Status, StringFormat={}Current status: {0}}"
+                           Visibility="{Binding FbwfStatusVisibility, Converter={StaticResource IsTrueToVisibility}}"
+                           Style="{StaticResource CurrentStatusStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Style="{DynamicResource SliderCheckBox}"
                       Content="{DynamicResource OverlayCacheDataCompression}" 
                       Tag="OverlayCacheDataCompression"
                       Click="OnCbClick"
-                      IsChecked="{Binding Path=DisplayVM.OverlayCacheDataCompression, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                      IsChecked="{Binding Path=NextSession.OverlayCacheDataCompression, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
-            <CheckBox Style="{DynamicResource SliderCheckBox}" 
+                <TextBlock Text="{Binding Path=CurrentSession.OverlayCacheDataCompression, StringFormat={}Current status: {0}}"
+                           Visibility="{Binding OverlayCacheDataCompressionVisibility, Converter={StaticResource IsTrueToVisibility}}"
+                           Style="{StaticResource CurrentStatusStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Style="{DynamicResource SliderCheckBox}" 
                       Content="{DynamicResource OverlayCachePreAllocation}" 
                       Tag="OverlayCachePreAllocation"
                       Click="OnCbClick"
-                      IsChecked="{Binding Path=DisplayVM.OverlayCachePreAllocation, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
+                      IsChecked="{Binding Path=NextSession.OverlayCachePreAllocation, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
-            <CheckBox Style="{DynamicResource SliderCheckBox}" 
+                <TextBlock Text="{Binding Path=CurrentSession.OverlayCachePreAllocation, StringFormat={}Current status: {0}}"
+                           Visibility="{Binding OverlayCacheDataCompressionVisibility, Converter={StaticResource IsTrueToVisibility}}"
+                           Style="{StaticResource CurrentStatusStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Style="{DynamicResource SliderCheckBox}" 
                       Content="{DynamicResource SizeDisplay}" 
                       Tag="SizeDisplay"
                       Click="OnCbClick"
-                      IsChecked="{Binding Path=DisplayVM.SizeDisplay, Converter={StaticResource FbwfSizeDisplayToBool}, Mode=TwoWay}"
+                      IsChecked="{Binding Path=NextSession.SizeDisplay, Converter={StaticResource FbwfSizeDisplayToBool}, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
+                <TextBlock Text="{Binding Path=CurrentSession.SizeDisplay, StringFormat={}Current status: {0}}"
+                           Visibility="{Binding SizeDisplayVisibility, Converter={StaticResource IsTrueToVisibility}}"
+                           Style="{StaticResource CurrentStatusStyle}"/>
+            </StackPanel>
+
             <CheckBox Style="{DynamicResource SliderCheckBox}" 
                       Content="{DynamicResource AutoMountAtBoot}"
                       Tag="AutoMountAtBoot"
@@ -57,22 +79,26 @@
                       IsChecked="{Binding Path=AutoMountAtBoot, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
             <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
-                <TextBlock Text="{DynamicResource DriverLetter}"/>
+                <TextBlock Text="{DynamicResource DriverLetter}"
+                           Style="{StaticResource Lable}"/>
                 <ComboBox ItemsSource="{Binding Path=CanUseDriverLetter}" 
                           SelectedValue="{Binding Path=SelectedDriverLetter}" 
                           IsReadOnly="True" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
-                <TextBlock Text="{DynamicResource CacheSize}"/>
-                <TextBox Text="{Binding Path=DisplayVM.OverlayCacheThreshold, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Text="GB"/>
+                <TextBlock Text="{DynamicResource CacheSize}"
+                           Style="{StaticResource Lable}"/>
+                <TextBox Text="{Binding Path=NextSession.OverlayCacheThreshold, UpdateSourceTrigger=PropertyChanged}" MinWidth="60"/>
+                <TextBlock Text="MB" Style="{StaticResource Lable}" Margin="5,0,0,0"/>
+                <TextBlock Text="{Binding Path=CurrentSession.OverlayCacheThreshold, StringFormat={}current cache size: {0}}"
+                           Visibility="{Binding OverlayCacheThresholdVisibility, Converter={StaticResource IsTrueToVisibility}}"
+                           Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>
             <Button Content="{DynamicResource Apply}" 
                     Click="OnBtnClick" 
                     IsEnabled="{Binding InstallEnable}"
                     Height="24" Width="100"
-                    Margin="0,10,0,0"
                     HorizontalAlignment="Right"/>
         </StackPanel>
     </StackPanel>

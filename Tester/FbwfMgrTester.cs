@@ -54,5 +54,31 @@ namespace Fbwf.Tester
                 Assert.Fail(ex.Message);
             }
         }
+
+        [Test]
+        public void SetCacheSize()
+        {
+            try
+            {
+                var result = FbwfMgr.SetCacheSize(384);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public async Task SetCacheSizeAsync()
+        {
+            try
+            {
+               var result = await FbwfMgr.SetCacheSizeAsync(384);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
     }
 }

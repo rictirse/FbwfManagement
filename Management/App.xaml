@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Language;component/StringResources.xaml"/>
                 <ResourceDictionary Source="/Style/CheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="/Style/TextBlockStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

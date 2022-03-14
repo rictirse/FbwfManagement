@@ -31,9 +31,17 @@ namespace Fbwf.Library.Helpers
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<string> CanUseDeviceName() =>
+            DiskLetterList.Except(AllDevice());
+        
+        /// <summary>
+        /// 是否合法磁碟代號
+        /// </summary>
+        public static bool Conforms(string diskLetter) =>
+            DiskLetterList.Any(x => x == diskLetter);
+
+        static readonly IEnumerable<string> DiskLetterList =
             new[] {"A:\\", "B:\\", "C:\\", "D:\\", "E:\\", "F:\\", "G:\\", "H:\\", "I:\\", "J:\\",
                    "K:\\", "L:\\", "M:\\", "N:\\", "O:\\", "P:\\", "Q:\\", "R:\\", "S:\\", "T:\\",
-                   "U:\\", "V:\\", "W:\\", "X:\\", "Y:\\", "Z:\\" }
-                .Except(AllDevice());
+                   "U:\\", "V:\\", "W:\\", "X:\\", "Y:\\", "Z:\\" };
     }
 }

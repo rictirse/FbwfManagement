@@ -27,7 +27,7 @@ namespace Fbwf.Library.Method
         /// <summary>
         /// 啟用Fbwf 
         /// </summary>
-        /// <param name="status">true啟用 / false 停用</param>
+        /// <param name="status">true 啟用 / false 停用</param>
         public static async Task Enable(bool status)
         {
             if (status)
@@ -84,11 +84,11 @@ namespace Fbwf.Library.Method
         {
             if (status)
             {
-                await FbwfMgr.SetSizeDisplayAsync(0);
+                await FbwfMgr.SetSizeDisplayAsync(1);
             }
             else
             {
-                await FbwfMgr.SetSizeDisplayAsync(1);
+                await FbwfMgr.SetSizeDisplayAsync(0);
             }
         }
 
