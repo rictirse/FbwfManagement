@@ -99,26 +99,4 @@ namespace Fbwf.Library.ViewModel
             return result;
         }
     }
-
-    internal static class FbwfStatusVMExtensions
-    {
-        /// <summary>
-        /// 確認是否需要重開機
-        /// </summary>
-        public static bool CheckNeedReboot(this FbwfStatusVM curr, FbwfStatusVM next)
-        {
-            if (curr.Status != next.Status) return true;
-            if (curr.OverlayCacheDataCompression != next.OverlayCacheDataCompression) return true;
-            if (curr.OverlayCachePreAllocation != next.OverlayCachePreAllocation) return true;
-            if (curr.SizeDisplay != next.SizeDisplay) return true;
-            if (curr.OverlayCacheThreshold != next.OverlayCacheThreshold) return true;
-
-            if (!curr.ProtectedVolume
-                .All(x => next.ProtectedVolume.Contains(x))) return true;
-            if (!curr.WriteThroughListOfEachProtectedVolume
-                .All(x => next.WriteThroughListOfEachProtectedVolume.Contains(x))) return true;
-
-            return false;
-        }
-    }
 }
