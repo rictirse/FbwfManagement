@@ -9,6 +9,7 @@
         <Setter Property="Background" Value="{x:Null}" />
         <Setter Property="FontSize" Value="9" />
         <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="Green" />
     </Style>
 
     <Style x:Key="Lable" TargetType="{x:Type TextBlock}">

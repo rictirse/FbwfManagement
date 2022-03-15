@@ -7,19 +7,21 @@
         xmlns:CVT="clr-namespace:Fbwf.Management.Converter"
         mc:Ignorable="d"
         Closing="Window_Closing"
+        ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="FbwfControlPanel" Height="350" Width="450">
+        Title="FbwfControlPanel" Height="380" Width="450">
     <Window.Resources>
         <ResourceDictionary>
             <CVT:IsFalseToVisibility x:Key="IsFalseToVisibility"/>
             <CVT:FbwfStatusToBool x:Key="FbwfStatusToBool"/>
             <CVT:FbwfSizeDisplayToBool x:Key="FbwfSizeDisplayToBool"/>
             <CVT:IsTrueToVisibility x:Key="IsTrueToVisibility"/>
+            <CVT:IEnumerableToString x:Key="IEnumerableToString"/>
         </ResourceDictionary>
     </Window.Resources>
 
 
-    <StackPanel Orientation="Vertical" Margin="15">
+    <StackPanel Orientation="Vertical" Margin="15" VerticalAlignment="Center">
         <CheckBox Style="{DynamicResource SliderCheckBox}"
                       Content="{DynamicResource FbwfInstall}" 
                       Tag="FbwfInstall"
@@ -32,9 +34,10 @@
                           Content="{DynamicResource FbwfEnable}" 
                           Tag="FbwfEnable"
                           Click="OnCbClick"
+                          IsEnabled="{Binding Install}"
                           IsChecked="{Binding Path=NextSession.Status, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
                           Margin="0,0,0,15"/>
-                <TextBlock Text="{Binding Path=CurrentSession.Status, StringFormat={}Current status: {0}}"
+                <TextBlock Text="{Binding Path=CurrentSession.Status, StringFormat=Current status: {0}}"
                            Visibility="{Binding FbwfStatusVisibility, Converter={StaticResource IsTrueToVisibility}}"
                            Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>
@@ -45,7 +48,7 @@
                       Click="OnCbClick"
                       IsChecked="{Binding Path=NextSession.OverlayCacheDataCompression, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
-                <TextBlock Text="{Binding Path=CurrentSession.OverlayCacheDataCompression, StringFormat={}Current status: {0}}"
+                <TextBlock Text="{Binding Path=CurrentSession.OverlayCacheDataCompression, StringFormat=Current status: {0}}"
                            Visibility="{Binding OverlayCacheDataCompressionVisibility, Converter={StaticResource IsTrueToVisibility}}"
                            Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>
@@ -56,7 +59,7 @@
                       Click="OnCbClick"
                       IsChecked="{Binding Path=NextSession.OverlayCachePreAllocation, Converter={StaticResource FbwfStatusToBool}, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
-                <TextBlock Text="{Binding Path=CurrentSession.OverlayCachePreAllocation, StringFormat={}Current status: {0}}"
+                <TextBlock Text="{Binding Path=CurrentSession.OverlayCachePreAllocation, StringFormat=Current status: {0}}"
                            Visibility="{Binding OverlayCacheDataCompressionVisibility, Converter={StaticResource IsTrueToVisibility}}"
                            Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>
@@ -67,7 +70,7 @@
                       Click="OnCbClick"
                       IsChecked="{Binding Path=NextSession.SizeDisplay, Converter={StaticResource FbwfSizeDisplayToBool}, Mode=TwoWay}"
                       Margin="0,0,0,15"/>
-                <TextBlock Text="{Binding Path=CurrentSession.SizeDisplay, StringFormat={}Current status: {0}}"
+                <TextBlock Text="{Binding Path=CurrentSession.SizeDisplay, StringFormat=Current display mode: {0}}"
                            Visibility="{Binding SizeDisplayVisibility, Converter={StaticResource IsTrueToVisibility}}"
                            Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>
@@ -82,8 +85,11 @@
                 <TextBlock Text="{DynamicResource DriverLetter}"
                            Style="{StaticResource Lable}"/>
                 <ComboBox ItemsSource="{Binding Path=CanUseDriverLetter}" 
-                          SelectedValue="{Binding Path=SelectedDriverLetter}" 
+                          SelectedValue="{Binding Path=NextSession.SelectedDriverLetter}" 
                           IsReadOnly="True" />
+                <TextBlock Text="{Binding Path=CurrentSession.ProtectedVolume, Converter={StaticResource IEnumerableToString}, StringFormat=Current driver letter: {0}}"
+                           Visibility="{Binding ProtectedVolumeVisibility, Converter={StaticResource IsTrueToVisibility}}"
+                           Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="5,0,0,5">
@@ -91,7 +97,7 @@
                            Style="{StaticResource Lable}"/>
                 <TextBox Text="{Binding Path=NextSession.OverlayCacheThreshold, UpdateSourceTrigger=PropertyChanged}" MinWidth="60"/>
                 <TextBlock Text="MB" Style="{StaticResource Lable}" Margin="5,0,0,0"/>
-                <TextBlock Text="{Binding Path=CurrentSession.OverlayCacheThreshold, StringFormat={}current cache size: {0}}"
+                <TextBlock Text="{Binding Path=CurrentSession.OverlayCacheThreshold, StringFormat=Current cache size: {0}}"
                            Visibility="{Binding OverlayCacheThresholdVisibility, Converter={StaticResource IsTrueToVisibility}}"
                            Style="{StaticResource CurrentStatusStyle}"/>
             </StackPanel>

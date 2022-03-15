@@ -54,20 +54,51 @@ namespace Fbwf.Library.ViewModel
             set { SetProperty(ref _OverlayCacheThreshold, value); }
         }
         float _OverlayCacheThreshold = 0f;
-
+        /// <summary>
+        /// 受控制磁碟區域
+        /// </summary>
         public ObservableRangeCollection<string> ProtectedVolume
         {
             get => _ProtectedVolume;
             set => SetProperty(ref _ProtectedVolume, value);
         }
         ObservableRangeCollection<string> _ProtectedVolume = new();
-
+        /// <summary>
+        /// 已選擇的Ramdisk磁碟代號
+        /// </summary>
+        public string SelectedDriverLetter
+        {
+            get => _SelectedDriverLetter;
+            set { SetProperty(ref _SelectedDriverLetter, value); }
+        }
+        string _SelectedDriverLetter = null;
+        /// <summary>
+        /// 排除磁碟區域
+        /// </summary>
         public ObservableRangeCollection<string> WriteThroughListOfEachProtectedVolume
         {
             get => _WriteThroughListOfEachProtectedVolume;
             set => SetProperty(ref _WriteThroughListOfEachProtectedVolume, value);
         }
         ObservableRangeCollection<string> _WriteThroughListOfEachProtectedVolume = new();
+        /// <summary>
+        /// 沒有磁碟代號的受控制區域
+        /// </summary>
+        public List<string> LostDiskLetterProtectedVolume { get; set; } = new List<string>();
+        /// <summary>
+        /// 沒有磁碟代號的排除制區域
+        /// </summary>
+        public List<string> LostDiskLetterWriteThroughListOfEachProtectedVolume { get; set; } = new List<string>();
+        /// <summary>
+        /// 清空已加入的控制區與排除區
+        /// </summary>
+        public void Clear()
+        {
+            ProtectedVolume.Clear();
+            WriteThroughListOfEachProtectedVolume.Clear();
+            LostDiskLetterProtectedVolume.Clear();
+            LostDiskLetterWriteThroughListOfEachProtectedVolume.Clear();
+        }
 
         public override string ToString()
         {

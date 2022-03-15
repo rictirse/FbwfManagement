@@ -48,6 +48,18 @@ namespace Fbwf.Library.Method
         /// </summary>
         public static async Task<string> RemoveVolumeAsync(char diskLetter) =>
             await CommandAsync($"Removevolume {diskLetter}: 1");
+
+        /// <summary>
+        /// 移除Fbwf遺失磁碟代號的受控區域
+        /// </summary>
+        public static string RemoveLostDiskLetterVolume(string volumeName) =>
+            Command($"Removevolume {volumeName}: 1");
+
+        /// <summary>
+        /// 移除Fbwf遺失磁碟代號的受控區域
+        /// </summary>
+        public static async Task<string> RemoveLostDiskLetterVolumeAsync(string volumeName) =>
+            await CommandAsync($"Removevolume {volumeName}: 1");
         #endregion
 
         #region DisplayConfig
@@ -66,32 +78,32 @@ namespace Fbwf.Library.Method
             ParseStatus(DisplayConfig());
         #endregion
 
-        #region OverlayCacheDataCompression
-        public static string DisableOverlayCacheDataCompression() =>
-            Command("");
+        #region Compression
+        public static string DisableCompression() =>
+            Command("Setcompressio 0");
 
-        public static async Task<string> DisableOverlayCacheDataCompressionAsync() =>
-            await CommandAsync("");
+        public static async Task<string> DisableCompressionAsync() =>
+            await CommandAsync("Setcompressio 1");
 
-        public static string EnableOverlayCacheDataCompression() =>
-            Command("");
+        public static string EnableCompression() =>
+            Command("Setcompressio 1");
 
-        public static async Task<string> EnableOverlayCacheDataCompressionAsync() =>
-            await CommandAsync("");
+        public static async Task<string> EnableCompressionAsync() =>
+            await CommandAsync("Setcompressio 1");
         #endregion
 
-        #region OverlayCachePreAllocation
-        public static string DisableOverlayCachePreAllocation() =>
-            Command("");
+        #region Pre-Allocation
+        public static string DisablePreAllocation() =>
+            Command("Setpreallocation 0");
 
-        public static async Task<string> DisableOverlayCachePreAllocationAsync() =>
-            await CommandAsync("");
+        public static async Task<string> DisablePreAllocationAsync() =>
+            await CommandAsync("Setpreallocation 0");
 
-        public static string EnableOverlayCachePreAllocation() =>
-            Command("");
+        public static string EnablePreAllocation() =>
+            Command("Setpreallocation 1");
 
-        public static async Task<string> EnableOverlayCachePreAllocationAsync() =>
-            await CommandAsync("");
+        public static async Task<string> EnablePreAllocationAsync() =>
+            await CommandAsync("Setpreallocation 1");
         #endregion
 
         #region SetCacheSize
@@ -137,15 +149,10 @@ namespace Fbwf.Library.Method
     {
         internal static string TrimCmd(this string @this)
         {
-            var sp = @this.Replace($"{Environment.CurrentDirectory}>", null).Split("\r\n");
-            var outputline = string.Empty;
+            var sp = @this.Replace($"{Environment.CurrentDirectory}>", null)
+                          .Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
 
-            for (int i = 2; i < sp.Length - 1; i++)
-            {
-                outputline += $"{sp[i]}\r\n";
-            }
-
-            return outputline;
+            return string.Join("\r\n", sp[2..^1]);
         }
     }
 }

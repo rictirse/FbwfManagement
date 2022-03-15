@@ -100,6 +100,8 @@ namespace Fbwf.Language
     {
         public static string Find(string key)
         {
+            if (Application.Current == null) return null;
+
             try
             {
                 return (string)Application.Current.FindResource(key);

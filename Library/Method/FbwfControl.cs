@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Fbwf.Library.Method
 {
@@ -17,6 +18,8 @@ namespace Fbwf.Library.Method
             if (status)
             {
                 await FbwfInstall.InstallAsync();
+                MessageBox.Show("Requires a restart to finish installing", "", MessageBoxButton.OK);
+                Environment.Exit(1);
             }
             else
             {
@@ -48,11 +51,11 @@ namespace Fbwf.Library.Method
         {
             if (status)
             {
-                await FbwfMgr.EnableOverlayCacheDataCompressionAsync();
+                await FbwfMgr.EnableCompressionAsync();
             }
             else
             {
-                await FbwfMgr.DisableOverlayCacheDataCompressionAsync();
+                await FbwfMgr.DisableCompressionAsync();
             }
         }
 
@@ -66,11 +69,11 @@ namespace Fbwf.Library.Method
         {
             if (status)
             {
-                await FbwfMgr.EnableOverlayCachePreAllocationAsync();
+                await FbwfMgr.EnablePreAllocationAsync();
             }
             else
             {
-                await FbwfMgr.DisableOverlayCachePreAllocationAsync();
+                await FbwfMgr.DisablePreAllocationAsync();
             }
         }
 

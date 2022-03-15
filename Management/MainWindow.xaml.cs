@@ -4,17 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Fbwf.Management
 {
@@ -67,20 +58,32 @@ namespace Fbwf.Management
 
         private async void OnBtnClick(object sender, RoutedEventArgs e)
         {
-            var cacheSize    = App.fbwfMgr.NextSession.OverlayCacheThreshold;
-            var selectedDisk = App.fbwfMgr.SelectedDriverLetter;
-            var diskLetter   = selectedDisk.Substring(0, 1);
+            var fbwfMgr         = App.fbwfMgr.NextSession;
+            var cacheSize       = fbwfMgr.OverlayCacheThreshold;
+            var selectedDisk    = fbwfMgr.SelectedDriverLetter;
+            var diskLetter_str  = selectedDisk.Substring(0, 1);
+            var diskLetter_char = selectedDisk.FirstOrDefault();
+
+            if (!VolumeHelper.Conforms(diskLetter_char))
+            {
+                MessageBox.Show("Please specify a valid drive.", "", MessageBoxButton.OK);
+                return;
+            }
+            if (cacheSize <= 0)
+            {
+                MessageBox.Show("Please enter a valid cache size.", "", MessageBoxButton.OK);
+                return;
+            }
 
             await App.fbwfMgr.RefreshAsync();
 
-            if (cacheSize != App.fbwfMgr.NextSession.OverlayCacheThreshold)
+            if (cacheSize != fbwfMgr.OverlayCacheThreshold)
             {
-                App.fbwfMgr.NextSession.OverlayCacheThreshold = cacheSize;
+                fbwfMgr.OverlayCacheThreshold = cacheSize;
                 await FbwfMgr.SetCacheSizeAsync((int)cacheSize);
             }
 
-            if (!VolumeHelper.Exists(selectedDisk) && 
-                VolumeHelper.Conforms(selectedDisk))
+            if (!VolumeHelper.Exists(diskLetter_char))
             {
                 try
                 {
@@ -92,7 +95,7 @@ namespace Fbwf.Management
                     }
                         
                     await VHDMounter.CreatVHDAsync(fi);
-                    await VHDMounter.AttachAsync(fi, selectedDisk.FirstOrDefault());
+                    await VHDMounter.AttachAsync(fi, diskLetter_char);
                 }
                 catch (Exception ex)
                 {
@@ -101,16 +104,18 @@ namespace Fbwf.Management
 
                 ///新增選定的控制磁區
                 ///新增需要已存在的磁碟區，所以vhd要先mount
-                if (!App.fbwfMgr.NextSession.ProtectedVolume.Any(x => x == diskLetter))
+                if (!fbwfMgr.ProtectedVolume.Any(x => x == $"{diskLetter_str}:"))
                 {
-                    await FbwfMgr.AddVolumeAsync(diskLetter.FirstOrDefault());
+                    await FbwfMgr.AddVolumeAsync(diskLetter_char);
                 }
                 ///移除非選定的控制磁區
-                foreach (var _diskLetter in App.fbwfMgr.NextSession.ProtectedVolume.Except(new[] { diskLetter }))
+                foreach (var _diskLetter in fbwfMgr.ProtectedVolume.Except(new[] { $"{diskLetter_str}:" }))
                 {
-                    await FbwfMgr.RemoveVolumeAsync(_diskLetter.FirstOrDefault());
+                    await FbwfMgr.RemoveVolumeAsync(diskLetter_char);
                 }
             }
+            await App.fbwfMgr.RefreshAsync();
+            MessageBox.Show("Requires a restart to finish setting.", "", MessageBoxButton.OK);
         }
     }
 }

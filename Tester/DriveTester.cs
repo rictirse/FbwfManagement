@@ -47,7 +47,7 @@ namespace Fbwf.Tester
         {
             try
             {
-                var status = VolumeHelper.Exists(null);
+                var status = VolumeHelper.Exists('E');
             }
             catch (Exception ex)
             {

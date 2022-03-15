@@ -26,15 +26,6 @@ namespace Fbwf.Library.Method
         }
         float? _CacheSize = null;
         /// <summary>
-        /// 已選擇的Ramdisk磁碟代號
-        /// </summary>
-        public string SelectedDriverLetter
-        {
-            get => _SelectedDriverLetter;
-            set { SetProperty(ref _SelectedDriverLetter, value); }
-        }
-        string _SelectedDriverLetter = null;
-        /// <summary>
         /// 能使用的磁碟代號
         /// </summary>
         public ObservableRangeCollection<string> CanUseDriverLetter
@@ -89,12 +80,28 @@ namespace Fbwf.Library.Method
         }
         bool _OverlayCacheThresholdVisibility = false;
         /// <summary>
+        /// Visibility Overlay cache threshold size textblock
+        /// </summary>
+        public bool ProtectedVolumeVisibility
+        {
+            get => _ProtectedVolumeVisibility;
+            set { SetProperty(ref _ProtectedVolumeVisibility, value); }
+        }
+        bool _ProtectedVolumeVisibility = false;
+        /// <summary>
         /// Fbwf是否已安裝
         /// </summary>
         public bool IsInstall
         {
             get => _IsInstall;
-            set { SetProperty(ref _IsInstall, value); }
+            set 
+            { 
+                SetProperty(ref _IsInstall, value);
+                if (!value)
+                {
+                    CollapsedAll();
+                }
+            }
         }
         bool _IsInstall = false;
         /// <summary>
@@ -146,8 +153,40 @@ namespace Fbwf.Library.Method
             FbwfStatus.Add(FbwfStatusSession.Next, NextSession);
             Refresh();
             this.CanUseDriverLetter = new();
-            CanUseDriverLetter.AddRange(VolumeHelper.CanUseDeviceName());
-            SelectedDriverLetter = $"{CurrentSession.ProtectedVolume.FirstOrDefault()}\\";
+            var diskLetter = VolumeHelper.CanUseDeviceName()
+                .Union(CurrentSession.ProtectedVolume.Select(x => $"{x}\\"))
+                .Union(CurrentSession.ProtectedVolume.Select(x => $"{x}\\"))
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+            CanUseDriverLetter.AddRange(diskLetter);
+        }
+
+        private IEnumerable<string> LostDiskLetterProtectedVolume =>
+             CurrentSession.LostDiskLetterProtectedVolume
+                .Union(NextSession.LostDiskLetterProtectedVolume)
+                .ToList();
+
+        /// <summary>
+        /// 刪除沒有磁碟代號的fbwf受控區
+        /// </summary>
+        public void RemoveLostDiskLetterVolume()
+        {
+            foreach (var volume in LostDiskLetterProtectedVolume)
+            {
+                RemoveLostDiskLetterVolume(volume);
+            }
+        }
+
+        /// <summary>
+        /// 刪除沒有磁碟代號的fbwf受控區
+        /// </summary>
+        public async Task RemoveLostDiskLetterVolumeAsync()
+        {
+            foreach (var volume in LostDiskLetterProtectedVolume)
+            {
+                await RemoveLostDiskLetterVolumeAsync(volume);
+            }
         }
 
         private void ParseStatus(string status)
@@ -160,12 +199,14 @@ namespace Fbwf.Library.Method
                 if (line.Contains("File-based write filter configuration for the current session:"))
                 {
                     currentStatus = FbwfStatus[FbwfStatusSession.Current];
+                    currentStatus.Clear();
                     IsInstall  = true;
                     volumeType = VolumeType.Other;
                 }
                 else if (line.Contains("File-based write filter configuration for the next session:"))
                 {
                     currentStatus = FbwfStatus[FbwfStatusSession.Next];
+                    currentStatus.Clear();
                     IsInstall  = true;
                     volumeType = VolumeType.Other;
                 }
@@ -206,31 +247,72 @@ namespace Fbwf.Library.Method
                 else if (volumeType != VolumeType.Other)
                 {
                     var sp = line.Split('(');
-                    if (sp.Length == 2)
+                    if (sp.Length == 1 && 
+                        !line.ToLower().Contains("exit"))
+                    {
+                        if (volumeType == VolumeType.ProtectedVolume &&
+                            !currentStatus.LostDiskLetterProtectedVolume.Any(x => x == line))
+                        {
+                            currentStatus.LostDiskLetterProtectedVolume.Add(line);
+                        }
+                        else if (volumeType == VolumeType.WriteThroughListOfEachProtectedVolume &&
+                                !currentStatus.LostDiskLetterWriteThroughListOfEachProtectedVolume.Any(x => x == line))
+                        {
+                            currentStatus.LostDiskLetterWriteThroughListOfEachProtectedVolume.Add(line);
+                        }
+                    }
+                    else if (sp.Length == 2)
                     {
                         var volume = sp[1].Remove(sp[1].Length - 1, 1);
-                        if (volume.Contains("none")) continue;
+                       
                         if (volumeType == VolumeType.ProtectedVolume &&
                             !currentStatus.ProtectedVolume.Any(x => x == volume))
                         {
                             currentStatus.ProtectedVolume.Add(volume);
                         }
-                        else if (volumeType == VolumeType.WriteThroughListOfEachProtectedVolume &&
-                                !currentStatus.WriteThroughListOfEachProtectedVolume.Any(x => x == volume))
+                        else if (volumeType == VolumeType.WriteThroughListOfEachProtectedVolume)
                         {
-                            currentStatus.WriteThroughListOfEachProtectedVolume.Add(volume);
+                            //未實作
                         }
                     }
                 }
             }
-            FbwfStatusVisibility = CurrentSession.Status != NextSession.Status;
-            OverlayCacheDataCompressionVisibility = CurrentSession.OverlayCacheDataCompression != NextSession.OverlayCacheDataCompression;
-            OverlayCachePreAllocationVisibility = CurrentSession.OverlayCachePreAllocation != NextSession.OverlayCachePreAllocation;
-            SizeDisplayVisibility = CurrentSession.SizeDisplay != NextSession.SizeDisplay;
-            OverlayCacheThresholdVisibility = CurrentSession.OverlayCacheThreshold != NextSession.OverlayCacheThreshold;
+            UpdateProperty();
+        }
+
+        /// <summary>
+        /// 更新UI上的顯示
+        /// </summary>
+        private void UpdateProperty()
+        {
+            NextSession.SelectedDriverLetter = $"{NextSession.ProtectedVolume.FirstOrDefault()}\\";
+
+            FbwfStatusVisibility = 
+                CurrentSession.Status != NextSession.Status;
+            OverlayCacheDataCompressionVisibility =
+                CurrentSession.OverlayCacheDataCompression != NextSession.OverlayCacheDataCompression;
+            OverlayCachePreAllocationVisibility =
+                CurrentSession.OverlayCachePreAllocation != NextSession.OverlayCachePreAllocation;
+            SizeDisplayVisibility =
+                CurrentSession.SizeDisplay != NextSession.SizeDisplay;
+            OverlayCacheThresholdVisibility = 
+                CurrentSession.OverlayCacheThreshold != NextSession.OverlayCacheThreshold;
+            ProtectedVolumeVisibility = 
+                string.Join(",", CurrentSession.ProtectedVolume) != string.Join(",", NextSession.ProtectedVolume);
 
             NeedReboot = CurrentSession.CheckNeedReboot(NextSession);
             AutoMountAtBoot = FbwfTaskScheduler.Exists();
+        }
+
+        private void CollapsedAll()
+        {
+            FbwfStatusVisibility = false;
+            OverlayCacheDataCompressionVisibility = false;
+            OverlayCachePreAllocationVisibility = false;
+            SizeDisplayVisibility = false;
+            OverlayCacheThresholdVisibility = false;
+            ProtectedVolumeVisibility = false;
+            AutoMountAtBoot = false;
         }
     }
 }

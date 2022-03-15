@@ -9,6 +9,7 @@
 		<Product>FbwfManagement</Product>
 		<Copyright>Copyright © DangWang $([System.DateTime]::Now.ToString(yyyy))</Copyright>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>NewDang.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -23,6 +24,10 @@
 		<Version Condition=" '$(DateTimeSuffix)' == '' ">0.0.0.1</Version>
 		<Version Condition=" '$(DateTimeSuffix)' != '' ">$(DateTimeSuffix)</Version>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="NewDang.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Library\Library.csproj" />

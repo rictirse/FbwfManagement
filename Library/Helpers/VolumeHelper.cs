@@ -21,23 +21,24 @@ namespace Fbwf.Library.Helpers
         /// 確認磁碟代號是否已存在
         /// </summary>
         /// <param name="volumeName">可接受單一個英文字代號或磁碟代號後加上:\</param>
-        public static bool Exists(string volumeName) =>
+        public static bool Exists(char volumeName) =>
             DriveInfo.GetDrives()
-                .Select(x => x.Name.Replace($":\\", null))
-                .Any(x => x == volumeName?.Replace($":\\", null));
+                .Select(x => x.Name.FirstOrDefault())
+                .Any(x => x == volumeName);
 
         /// <summary>
         /// 能使用的磁碟代號
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<string> CanUseDeviceName() =>
-            DiskLetterList.Except(AllDevice());
+            DiskLetterList.Except(AllDevice())
+                          .ToList();
         
         /// <summary>
         /// 是否合法磁碟代號
         /// </summary>
-        public static bool Conforms(string diskLetter) =>
-            DiskLetterList.Any(x => x == diskLetter);
+        public static bool Conforms(char diskLetter) =>
+            DiskLetterList.Any(x => x == $"{diskLetter}:\\");
 
         static readonly IEnumerable<string> DiskLetterList =
             new[] {"A:\\", "B:\\", "C:\\", "D:\\", "E:\\", "F:\\", "G:\\", "H:\\", "I:\\", "J:\\",
