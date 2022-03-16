@@ -285,7 +285,11 @@ namespace Fbwf.Library.Method
         /// </summary>
         private void UpdateProperty()
         {
-            NextSession.SelectedDriverLetter = $"{NextSession.ProtectedVolume.FirstOrDefault()}\\";
+            var nextProtectedVolume = NextSession.ProtectedVolume.FirstOrDefault();
+            if (!string.IsNullOrEmpty(nextProtectedVolume))
+            { 
+                NextSession.SelectedDriverLetter = $"{nextProtectedVolume}\\";
+            }
 
             FbwfStatusVisibility = 
                 CurrentSession.Status != NextSession.Status;
