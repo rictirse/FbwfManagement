@@ -87,7 +87,7 @@ namespace Fbwf.Tester
         {
             try
             {
-                var result = FbwfMgr.SetCacheSize(384);
+                var result = FbwfMgr.SetCacheSize(60000);
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace Fbwf.Tester
         {
             try
             {
-               var result = await FbwfMgr.SetCacheSizeAsync(384);
+               var result = await FbwfMgr.SetCacheSizeAsync(60000);
             }
             catch (Exception ex)
             {
